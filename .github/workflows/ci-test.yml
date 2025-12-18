@@ -1,0 +1,48 @@
+name: CI on test
+
+on:
+  pull_request:
+    branches: [ "test" ]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: pytest -q
+
+  deploy_test:
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+
+      # Databricks empfiehlt DAB für CI/CD; Deploy läuft via Databricks CLI
+      - name: Install Databricks CLI
+        run: |
+          pip install databricks-cli
+
+      - name: Configure auth
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_TEST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TEST }}
+        run: |
+          echo "Host set"
+
+      - name: Validate bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_TEST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TEST }}
+        run: |
+          databricks bundle validate -t test
+
+      - name: Deploy bundle to TEST
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_TEST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TEST }}
+        run: |
+          databricks bundle deploy -t test
