@@ -55,12 +55,12 @@ class Pipeline:
         df = self.reader.read_data()
         return self.pseudo.get_pseudo(df)
 
+if __name__ == "__main__":
+    pipeline = Pipeline(
+        CSVReader("/Workspace/Users/kaltenbrunnergeorg@googlemail.com/MLOps/Churn Modeling.csv"),
+        HashPseudo(salt="pipeline123hLkyZct"),
+    )
 
-pipeline = Pipeline(
-    CSVReader("/Workspace/Users/kaltenbrunnergeorg@googlemail.com/MLOps/Churn Modeling.csv"),
-    HashPseudo(salt="pipeline123hLkyZct"),
-)
+    d = CSVReader("/Workspace/Users/kaltenbrunnergeorg@googlemail.com/MLOps/Churn Modeling.csv").read_data()
 
-d = CSVReader("/Workspace/Users/kaltenbrunnergeorg@googlemail.com/MLOps/Churn Modeling.csv").read_data()
-
-print(d)
+    print(d)
