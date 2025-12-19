@@ -1,14 +1,14 @@
-name: CI on test (uses ml_test)
+name: CI on main (uses ml_prod)
 
 on:
   push:
-    branches: ["test"]
+    branches: ["main"]
 
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     env:
-      DATABRICKS_CATALOG: ml_test
+      DATABRICKS_CATALOG: ml_prod
 
     steps:
       - name: Checkout
